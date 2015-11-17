@@ -13,6 +13,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.view.Menu;
@@ -28,6 +29,8 @@ import com.aware.providers.Accelerometer_Provider;
 import com.aware.providers.Locations_Provider;
 import com.aware.providers.Magnetometer_Provider;
 
+import java.util.UUID;
+
 public class Plugin extends AppCompatActivity {
 
     private static String DEBUG = "DEBUGGING";
@@ -42,6 +45,9 @@ public class Plugin extends AppCompatActivity {
     public TextView txtview;
     public TextView acc_txt;
     public PostgreSqlCon Posconn;
+    public static LongOperation lo;
+    public static char[] Device_id;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +67,9 @@ public class Plugin extends AppCompatActivity {
 
         txtview = (TextView) findViewById(R.id.speed);
         acc_txt = (TextView) findViewById(R.id.accelerometer);
-
-
+        String device_id = Aware_Preferences.DEVICE_ID;
+        Device_id = device_id.toCharArray();
+        Log.d("device_id", Aware_Preferences.DEVICE_ID);
         Intent aware = new Intent(this, Aware.class);
         startService(aware);
 
@@ -74,6 +81,7 @@ public class Plugin extends AppCompatActivity {
 
         Aware.setSetting(this, Aware_Preferences.STATUS_ACCELEROMETER, true);
         Aware.setSetting(this, Aware_Preferences.FREQUENCY_ACCELEROMETER, 200000);
+
 
 
         IntentFilter filter = new IntentFilter();
@@ -88,14 +96,29 @@ public class Plugin extends AppCompatActivity {
         Intent acc_intent= new Intent(Accelerometer.ACTION_AWARE_ACCELEROMETER);
         sendBroadcast(acc_intent);
 
-        //registerReceiver(Datareceiver, filter);
-        //Log.d(DEBUG, "5");
+        registerReceiver(Datareceiver, filter);
+        Log.d(DEBUG, "5");
 
-        LongOperation lo = new LongOperation();
-        lo.execute();
+
     }
 
 
+
+    public static String getDeviceId(Context context){
+        final TelephonyManager tm = (TelephonyManager) context
+            .getSystemService(Context.TELEPHONY_SERVICE);
+        final String tmDevice, tmSerial, androidId;
+        tmDevice = tm.getDeviceId();
+        tmSerial = tm.getSimSerialNumber();
+        androidId = android.provider.Settings.Secure.getString(
+                context.getContentResolver(),
+                android.provider.Settings.Secure.ANDROID_ID);
+        UUID deviceUuid = new UUID(androidId.hashCode(),
+                ((long) tmDevice.hashCode() << 32) | tmSerial.hashCode());
+        String uniqueId = deviceUuid.toString();
+        Log.d("debug", "uuid=" + uniqueId);
+        return uniqueId;
+    }
 
 
     datareceiver Datareceiver = new datareceiver();
@@ -105,7 +128,7 @@ public class Plugin extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(Locations.ACTION_AWARE_LOCATIONS)){
-                Log.d(DEBUG,"6");
+                Log.d(DEBUG,"location data ");
                 Cursor location = context.getContentResolver().query
                         (Locations_Provider.Locations_Data.CONTENT_URI, null, null, null, Locations_Provider.Locations_Data.TIMESTAMP + " DESC LIMIT 1");
                 Log.d(DEBUG,"7");
@@ -117,11 +140,19 @@ public class Plugin extends AppCompatActivity {
                     latitude = location.getDouble(location.getColumnIndex(Locations_Provider.Locations_Data.LATITUDE));
                     altitude = location.getDouble(location.getColumnIndex(Locations_Provider.Locations_Data.ALTITUDE));
                     txtview.setText(longitude + " ");
+                    long epoch = System.currentTimeMillis();
+                    String timestamp = String.valueOf(epoch);
+                    double Timestamp = Double.parseDouble(timestamp);
+                    String sql = "insert into bicyclers.\"Location\"(timestamp, longitude, latitude, altitude, speed)values("+Timestamp+","+longitude+","+latitude+","+altitude+","+speed+")";
+                    Log.d(DEBUG, "data sql location 1");
+                    lo = new LongOperation(sql);
+                    lo.execute();
+                    Log.d(DEBUG, "data sql location 2");
 
-                    //txtview.setText(speed + " ");
+
                     Log.d(DEBUG, "final");
-                   // Toast toast = Toast.makeText(context, speed+" ", Toast.LENGTH_SHORT);
-                   // toast.show();
+
+
                     Log.d(DEBUG, "10");
                 }
             }
@@ -130,10 +161,6 @@ public class Plugin extends AppCompatActivity {
                 Log.d(DEBUG,"try to get accelerometer data");
                 Cursor accelerometer  = context.getContentResolver().query
                         (Accelerometer_Provider.Accelerometer_Data.CONTENT_URI, null, null, null, Accelerometer_Provider.Accelerometer_Data.TIMESTAMP + " DESC LIMIT 1");
-                //Log.d(DEBUG,"cursor data");
-                //String sq = "select * from  Accelerometer";
-                //Log.d(DEBUG, "data sql 1");
-                //Posconn = new PostgreSqlCon(sq);
                 Log.d(DEBUG, "data sql 1");
 
                 Log.d(DEBUG, "data sql 2");
@@ -145,14 +172,16 @@ public class Plugin extends AppCompatActivity {
                     acc = Math.sqrt(accelerometer_x * accelerometer_x + accelerometer_y * accelerometer_y + accelerometer_z * accelerometer_z);
                     acc_txt.setText(acc+" ");
                     String device_id = "sadas-1wa";
-                    String sym = "Accelerometer" ;
-                    String sql1 = "insert into bicyclers.";
-                    String sql2 = "\"sym\"(timestamp,  value_x, value_y, value_z, value)";
-                    String sql3 = "values(123111,  16612.21, 1881.232, 21412.221, 2132.163)";
-                    String sql12 = "insert into bicyclers.\"Accelerometer\"(timestamp,  value_x, value_y, value_z, value)values(123111,  16612.21, 1881.232, 21412.221, 2132.163)";
+                    long epoch = System.currentTimeMillis();
+                    String timestamp = String.valueOf(epoch);
+                    double Timestamp = Double.parseDouble(timestamp);
+
+                    String sql = "insert into bicyclers.\"Accelerometer\"(timestamp, value_x, value_y, value_z, value)values("+Timestamp+","+accelerometer_x+","+accelerometer_y+","+accelerometer_z+","+acc+")";
                     Log.d(DEBUG, "data sql acce 1");
-                    Posconn = new PostgreSqlCon(sql12);
                     Log.d(DEBUG, "data sql acce 2");
+                    Log.d("Device-id", Aware_Preferences.DEVICE_ID);
+                    lo = new LongOperation(sql);
+                    lo.execute();
                 }
             }
 
@@ -187,6 +216,7 @@ public class Plugin extends AppCompatActivity {
         super.onDestroy();
 
         Posconn.close();
+
         unregisterReceiver(Datareceiver);
         Aware.setSetting(this, Aware_Preferences.STATUS_LOCATION_GPS, false);
         Aware.stopPlugin(this,"com.example.jzhou.bicybler");
@@ -194,27 +224,18 @@ public class Plugin extends AppCompatActivity {
 
 
         private class LongOperation extends AsyncTask{
-
+            public  String sql;
+           LongOperation(String s){
+                sql = s;
+            }
         @Override
         protected Object doInBackground(Object[] params) {
             Log.d(DEBUG,"execute sql");
             String abc = "select * from bicyclers.\"Accelerometer\"";
-            String sql = "insert into bicyclers.\"Accelerometer\"(timestamp,  value_x, value_y, value_z, value)values(3223111,  26612.21, 6881.232, 33412.221, 6632.163)";
 
             Posconn = new PostgreSqlCon(sql);
             Log.d(DEBUG,"end sql");
-//            IntentFilter filter = new IntentFilter();
-//            Log.d(DEBUG, "4");
-//
-//            filter.addAction(Locations.ACTION_AWARE_LOCATIONS);
-//            filter.addAction(Accelerometer.ACTION_AWARE_ACCELEROMETER);
-//
-//            Intent intent = new Intent(Locations.ACTION_AWARE_LOCATIONS);
-//            sendBroadcast(intent);
-//
-//            Intent acc_intent= new Intent(Accelerometer.ACTION_AWARE_ACCELEROMETER);
-//            sendBroadcast(acc_intent);
-//            registerReceiver(Datareceiver, filter);
+
 
             return null;
         }
