@@ -20,37 +20,36 @@ public class PostgreSqlCon {
     static String url ;
     ResultSet rs=null;
 
-    PostgreSqlCon(String sql){
+    public void connection(String sql) throws SQLException, ClassNotFoundException {
         url="jdbc:postgresql://pilot1.cloudapp.net:5432/pilot?user=bicycler&password=bicycler_pilot";
-        try{
-            if(conn==null||conn.isClosed())
-            {
-                Class.forName(dirve);
-                conn = DriverManager.getConnection(url);
-            }
-            if (conn == null)
-            {
-                Log.d("conn", "hahahahahah");
-            }
-
-            pstate = conn.prepareStatement(sql);
-            rs=pstate.executeQuery();
-            if (pstate!=null){
-                System.out.print("pstate is not null");
-            }
-            if (rs!=null){
-                System.out.print("rs is not empty");
-            }
-
-        }catch(Exception e){
-            e.printStackTrace();
+        if(conn==null||conn.isClosed())
+        {
+            Class.forName(dirve);
+            conn = DriverManager.getConnection(url);
         }
-        //conn.close();
-        //pstate.close();
+        if (conn == null)
+        {
+            Log.d("conn", "hahahahahah");
+        }
+
+        query(sql);
+    }
+
+
+    public void query(String sql) throws SQLException {
+        pstate = conn.prepareStatement(sql);
+        rs=pstate.executeQuery();
+        if (pstate!=null){
+            System.out.print("pstate is not null");
+        }
+        if (rs!=null){
+            System.out.print("rs is not empty");
+        }
     }
 
     void close(){
         try {
+            if (conn != null)
             conn.close();
         } catch (SQLException e) {
             e.printStackTrace();

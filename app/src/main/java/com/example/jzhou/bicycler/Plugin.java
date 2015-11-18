@@ -33,6 +33,7 @@ import com.aware.providers.Accelerometer_Provider;
 import com.aware.providers.Locations_Provider;
 import com.aware.providers.Magnetometer_Provider;
 
+import java.sql.SQLException;
 import java.util.UUID;
 
 import static android.widget.Toast.LENGTH_LONG;
@@ -76,6 +77,24 @@ public class Plugin extends AppCompatActivity {
         });
 
 
+        long epoch = System.currentTimeMillis();
+        String timestamp = String.valueOf(epoch);
+        double Timestamp = Double.parseDouble(timestamp);
+        longitude = 11.12;
+        latitude = 23.44;
+        altitude = 123.33;
+        speed = 123.23;
+        String sql = "insert into bicyclers.\"Location\"(timestamp, longitude, latitude, altitude, speed, geom)values("+Timestamp+","+longitude+","+latitude+","+altitude+","+speed+"st_point("+longitude +","+latitude+")" +")";
+        Log.d(DEBUG, "data sql location 1");
+        try {
+            lo = new LongOperation(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        lo.execute();
+        Log.d(DEBUG, "data sql location 2");
 
 
 
@@ -242,9 +261,15 @@ public class Plugin extends AppCompatActivity {
                     long epoch = System.currentTimeMillis();
                     String timestamp = String.valueOf(epoch);
                     double Timestamp = Double.parseDouble(timestamp);
-                    String sql = "insert into bicyclers.\"Location\"(timestamp, longitude, latitude, altitude, speed)values("+Timestamp+","+longitude+","+latitude+","+altitude+","+speed+")";
+                    String sql = "insert into bicyclers.\"Location\"(timestamp, longitude, latitude, altitude, speed, geom)values("+Timestamp+","+longitude+","+latitude+","+altitude+","+speed+"st_point("+longitude +","+latitude+")" +")";
                     Log.d(DEBUG, "data sql location 1");
-                    lo = new LongOperation(sql);
+                    try {
+                        lo = new LongOperation(sql);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
                     lo.execute();
                     Log.d(DEBUG, "data sql location 2");
 
@@ -268,8 +293,14 @@ public class Plugin extends AppCompatActivity {
                 long epoch = System.currentTimeMillis();
                 String timestamp = String.valueOf(epoch);
                 double Timestamp = Double.parseDouble(timestamp);
-                String sql = "insert into bicyclers.\"Accelerometer\"(timestamp, value_x, value_y, value_z, value)values(" + Timestamp + "," + accelerometer_x + "," + accelerometer_y + "," + accelerometer_z + "," + acc  + ")";
-                lo = new LongOperation(sql);
+                String sql = "insert into bicyclers.\"Accelerometer\"(timestamp, value_x, value_y, value_z, value)values(" + Timestamp + "," + accelerometer_x + "," + accelerometer_y + "," + accelerometer_z + "," + acc +")";
+                try {
+                    lo = new LongOperation(sql);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
                 lo.execute();
                 Log.d(DEBUG, "data sql acce 2");
 
@@ -305,6 +336,8 @@ public class Plugin extends AppCompatActivity {
 
         }
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -343,18 +376,24 @@ public class Plugin extends AppCompatActivity {
 
         private class LongOperation extends AsyncTask{
             public  String sql;
-           LongOperation(String s){
+           LongOperation(String s) throws SQLException, ClassNotFoundException {
                 sql = s;
+               Posconn = new PostgreSqlCon();
+
+
             }
         @Override
         protected Object doInBackground(Object[] params) {
             Log.d(DEBUG,"execute sql");
-            String abc = "select * from bicyclers.\"Accelerometer\"";
+            try {
+                Posconn.connection(sql);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
 
-            Posconn = new PostgreSqlCon(sql);
             Log.d(DEBUG,"end sql");
-
-
             return null;
         }
     }
