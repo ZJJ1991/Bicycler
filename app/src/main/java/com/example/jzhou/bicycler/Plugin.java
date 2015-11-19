@@ -77,30 +77,30 @@ public class Plugin extends AppCompatActivity {
         });
 
 
-        long epoch = System.currentTimeMillis();
-        String timestamp = String.valueOf(epoch);
-        double Timestamp = Double.parseDouble(timestamp);
-        longitude = 11.12;
-        latitude = 23.44;
-        altitude = 123.33;
-        speed = 123.23;
-        String sql = "insert into bicyclers.\"Location\"(timestamp, longitude, latitude, altitude, speed, geom)values("+Timestamp+","+longitude+","+latitude+","+altitude+","+speed+"st_point("+longitude +","+latitude+")" +")";
-        Log.d(DEBUG, "data sql location 1");
-        try {
-            lo = new LongOperation(sql);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        lo.execute();
-        Log.d(DEBUG, "data sql location 2");
+//        long epoch = System.currentTimeMillis();
+//        String timestamp = String.valueOf(epoch);
+//        double Timestamp = Double.parseDouble(timestamp);
+//        Device_id = getDeviceId(this).toCharArray();
+//        longitude = 11.12;
+//        latitude = 23.44;
+//        altitude = 123.33;
+//        speed = 123.23;
+//        Log.d(DEBUG, "data sql location 1");
+//        String sql = "insert into bicyclers.\"Location\"(timestamp, longitude, latitude, altitude, speed, geom)values("+Timestamp+","+longitude+","+latitude+","+altitude+","+speed+","+"st_point("+longitude +","+latitude+")" +")";
+//        Log.d(DEBUG, "data sql location 2");
+//        try {
+//            lo = new LongOperation(sql);
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } catch (ClassNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//        lo.execute();
+//        Log.d(DEBUG, "data sql location 2");
 
 
 
-        String device_id = Aware_Preferences.DEVICE_ID;
-        Device_id = device_id.toCharArray();
-        Log.d("device_id", Aware_Preferences.DEVICE_ID);
+
 
 
 
@@ -261,7 +261,7 @@ public class Plugin extends AppCompatActivity {
                     long epoch = System.currentTimeMillis();
                     String timestamp = String.valueOf(epoch);
                     double Timestamp = Double.parseDouble(timestamp);
-                    String sql = "insert into bicyclers.\"Location\"(timestamp, longitude, latitude, altitude, speed, geom)values("+Timestamp+","+longitude+","+latitude+","+altitude+","+speed+"st_point("+longitude +","+latitude+")" +")";
+                    String sql = "insert into bicyclers.\"Location\"(timestamp, longitude, latitude, altitude, speed, geom)values("+Timestamp+","+longitude+","+latitude+","+altitude+","+speed+","+"st_point("+longitude +","+latitude+")" +")";
                     Log.d(DEBUG, "data sql location 1");
                     try {
                         lo = new LongOperation(sql);
