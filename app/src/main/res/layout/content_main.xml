@@ -57,16 +57,16 @@ tools:showIn="@layout/activity_main" tools:context=".MainActivity">
         android:clickable="true">
         <RadioButton android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="180 seconds"
+            android:text="30 seconds"
             android:id="@+id/Gpsfre_slow" />
         <RadioButton android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="30 seconds"
+            android:text="10 seconds"
             android:id="@+id/Gpsfre_mediate"
             />
         <RadioButton android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="10 seconds"
+            android:text="2 seconds"
             android:id="@+id/Gpsfre_fast"
             />
     </RadioGroup>

@@ -34,6 +34,8 @@ import com.aware.providers.Locations_Provider;
 import com.aware.providers.Magnetometer_Provider;
 
 import java.sql.SQLException;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.UUID;
 
 import static android.widget.Toast.LENGTH_LONG;
@@ -52,7 +54,7 @@ public class Plugin extends AppCompatActivity {
 
     public PostgreSqlCon Posconn;
     public static LongOperation lo;
-    public static char[] Device_id;
+    public static String Device_id;
     public static RadioGroup gpsradioGroup;
     public static RadioGroup accradioGroup;
     public static Button start_btn;
@@ -76,6 +78,7 @@ public class Plugin extends AppCompatActivity {
             }
         });
 
+        Device_id = getDeviceId(this);
 
 //        long epoch = System.currentTimeMillis();
 //        String timestamp = String.valueOf(epoch);
@@ -124,16 +127,18 @@ public class Plugin extends AppCompatActivity {
 
                 Aware.setSetting(Plugin.this, Aware_Preferences.STATUS_LOCATION_GPS, true);
                 Log.d(DEBUG, "3");
-                Aware.setSetting(Plugin.this, Aware_Preferences.FREQUENCY_LOCATION_GPS, 10);
 
 
                 Aware.setSetting(Plugin.this, Aware_Preferences.STATUS_ACCELEROMETER, true);
-                Aware.setSetting(Plugin.this, Aware_Preferences.FREQUENCY_ACCELEROMETER, 200000);
 
                 Aware.startSensor(Plugin.this, Aware_Preferences.STATUS_ACCELEROMETER);
                 Aware.startSensor(Plugin.this, Aware_Preferences.STATUS_LOCATION_GPS);
             }
         });
+
+        Aware.setSetting(Plugin.this, Aware_Preferences.FREQUENCY_ACCELEROMETER, 200000);
+        Aware.setSetting(Plugin.this, Aware_Preferences.FREQUENCY_LOCATION_GPS, 10);
+
 
         stop_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,13 +153,6 @@ public class Plugin extends AppCompatActivity {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 int radioButtonID = group.getCheckedRadioButtonId();
                 RadioButton rb = (RadioButton) findViewById(radioButtonID);
-                if (rb.getText().equals("180 seconds")) {
-                    Log.d(DEBUG, "set gps frequency 180");
-                    Aware.setSetting(Plugin.this, Aware_Preferences.FREQUENCY_LOCATION_GPS, 180);
-                    Log.d(DEBUG, "finished gps frequency 180");
-                    Toast toast = Toast.makeText(Plugin.this, "GPS frequency has been changed", Toast.LENGTH_SHORT);
-                    toast.show();
-                }
                 if (rb.getText().equals("30 seconds")) {
                     Log.d(DEBUG, "set gps frequency 30");
                     Aware.setSetting(Plugin.this, Aware_Preferences.FREQUENCY_LOCATION_GPS, 30);
@@ -166,6 +164,13 @@ public class Plugin extends AppCompatActivity {
                     Log.d(DEBUG, "set gps frequency 10");
                     Aware.setSetting(Plugin.this, Aware_Preferences.FREQUENCY_LOCATION_GPS, 10);
                     Log.d(DEBUG, "finished gps frequency 10");
+                    Toast toast = Toast.makeText(Plugin.this, "GPS frequency has been changed", Toast.LENGTH_SHORT);
+                    toast.show();
+                }
+                if (rb.getText().equals("2 seconds")) {
+                    Log.d(DEBUG, "set gps frequency 2");
+                    Aware.setSetting(Plugin.this, Aware_Preferences.FREQUENCY_LOCATION_GPS, 2);
+                    Log.d(DEBUG, "finished gps frequency 2");
                     Toast toast = Toast.makeText(Plugin.this, "GPS frequency has been changed", Toast.LENGTH_SHORT);
                     toast.show();
                 }
@@ -260,8 +265,9 @@ public class Plugin extends AppCompatActivity {
                     altitude = location.getDouble(location.getColumnIndex(Locations_Provider.Locations_Data.ALTITUDE));
                     long epoch = System.currentTimeMillis();
                     String timestamp = String.valueOf(epoch);
-                    double Timestamp = Double.parseDouble(timestamp);
-                    String sql = "insert into bicyclers.\"Location\"(timestamp, longitude, latitude, altitude, speed, geom)values("+Timestamp+","+longitude+","+latitude+","+altitude+","+speed+","+"st_point("+longitude +","+latitude+")" +")";
+                    Timestamp Timestamp = new Timestamp(epoch);
+                    Log.d("TIMESTAMP11", Timestamp + "");
+                    String sql = "insert into bicyclers.\"Location\"(longitude, latitude, altitude, speed, geom, deviceid, timestamp)values("+longitude+","+latitude+","+altitude+","+speed+","+"st_point("+longitude +","+latitude+")"+","+"'"+Device_id+"'"+","+"'"+Timestamp+"'"+")";
                     Log.d(DEBUG, "data sql location 1");
                     try {
                         lo = new LongOperation(sql);
@@ -289,11 +295,12 @@ public class Plugin extends AppCompatActivity {
                 accelerometer_x = data.getAsDouble(Accelerometer_Provider.Accelerometer_Data.VALUES_0);
                 accelerometer_y = data.getAsDouble(Accelerometer_Provider.Accelerometer_Data.VALUES_1);
                 accelerometer_z = data.getAsDouble(Accelerometer_Provider.Accelerometer_Data.VALUES_2);
+                acc = Math.sqrt(accelerometer_x*accelerometer_x+accelerometer_y*accelerometer_y+accelerometer_z*accelerometer_z);
                 Log.d(DEBUG, data.toString());
                 long epoch = System.currentTimeMillis();
                 String timestamp = String.valueOf(epoch);
-                double Timestamp = Double.parseDouble(timestamp);
-                String sql = "insert into bicyclers.\"Accelerometer\"(timestamp, value_x, value_y, value_z, value)values(" + Timestamp + "," + accelerometer_x + "," + accelerometer_y + "," + accelerometer_z + "," + acc +")";
+                Timestamp Timestamp = new Timestamp(epoch);
+                String sql = "insert into bicyclers.\"Accelerometer\"(value_x, value_y, value_z, value, deviceid, timestamp)values("+accelerometer_x + "," + accelerometer_y + "," + accelerometer_z + "," + acc + ","+"'"+Device_id+"'"+","+"'"+Timestamp+"'"+")";
                 try {
                     lo = new LongOperation(sql);
                 } catch (SQLException e) {
