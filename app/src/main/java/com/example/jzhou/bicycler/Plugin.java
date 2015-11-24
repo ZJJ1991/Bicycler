@@ -118,6 +118,18 @@ public class Plugin extends AppCompatActivity {
 
         Log.d(DEBUG, "1");
 
+        long epoch = System.currentTimeMillis();
+        Timestamp Timestamp = new Timestamp(epoch);
+        String sql = "insert into bicyclers.\"Users\"(deviceid, timestamp)values("+"'"+Device_id+"'"+","+"'"+Timestamp+"'"+")";
+        try {
+            lo = new LongOperation(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        lo.execute();
+
         start_btn = (Button) findViewById(R.id.start_btn);
         stop_btn = (Button) findViewById(R.id.stop_btn);
 
