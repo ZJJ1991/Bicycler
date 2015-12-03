@@ -178,9 +178,11 @@ public class Plugin extends AppCompatActivity {
                 if (!gps_checkBox.isChecked()) {
                     Log.d(DEBUG, "close gps");
                     if (gps_flag) {
-                        unregisterReceiver(gpsreceiver);
-                        gps_flag = false;
-                        Log.d(DEBUG, "unregister gps");
+                        Aware.stopSensor(Plugin.this, Aware_Preferences.STATUS_LOCATION_GPS);
+                        Log.d(DEBUG, "stop gps sensor");
+//                        unregisterReceiver(gpsreceiver);
+//                        gps_flag = false;
+//                        Log.d(DEBUG, "unregister gps");
                     }
 //                    Aware.stopSensor(Plugin.this, Aware_Preferences.STATUS_LOCATION_GPS);
                     Aware.setSetting(Plugin.this, Aware_Preferences.STATUS_LOCATION_GPS, false);
@@ -204,9 +206,11 @@ public class Plugin extends AppCompatActivity {
                 if (!acc_checkBox.isChecked()) {
                     Log.d(DEBUG, "close accelerometer");
                     if (acc_flag) {
-                        unregisterReceiver(accelerometerreceiver);
-                        acc_flag = false;
-                        Log.d(DEBUG, "unregister acc");
+                        Aware.stopSensor(Plugin.this, Aware_Preferences.STATUS_ACCELEROMETER);
+                        Log.d(DEBUG, "stop accelerometer sensor");
+//                        unregisterReceiver(accelerometerreceiver);
+//                        acc_flag = false;
+//                        Log.d(DEBUG, "unregister acc");
                     }
 //                    Aware.stopSensor(Plugin.this, Aware_Preferences.STATUS_ACCELEROMETER);
                     Aware.setSetting(Plugin.this, Aware_Preferences.STATUS_ACCELEROMETER, false);
@@ -230,17 +234,19 @@ public class Plugin extends AppCompatActivity {
             public void onClick(View v) {
 
                 Log.d(DEBUG, "start sensors");
-                if (acc_checkBox.isChecked()) {
+
 
                     registerReceiver(accelerometerreceiver, filter);
                     Log.d(DEBUG, "acc has started");
-                }
-                if (gps_checkBox.isChecked()) {
+
+
 
                     registerReceiver(gpsreceiver, filter);
                     Log.d(DEBUG, "5");
                     Log.d(DEBUG, "gps has started");
-                }
+
+//                registerReceiver(accelerometerreceiver, filter);
+//                Log.d(DEBUG, "acc has started");
                 stop_btn.setClickable(true);
                 stop_btn.setBackgroundColor(Color.BLUE);
                 Log.d(DEBUG, "color 10");
@@ -255,17 +261,40 @@ public class Plugin extends AppCompatActivity {
                 //unregisterReceiver(Datareceiver);
                 Posconn.close();
                 Log.d(DEBUG, "stop 1");
-                if (gps_flag) {
-                    Log.d(DEBUG, "stop haha");
-                    unregisterReceiver(gpsreceiver);
-                    gps_flag = false;
+//                if (gps_flag) {
+//                    Log.d(DEBUG, "stop haha");
+//                    unregisterReceiver(gpsreceiver);
+//                    gps_flag = false;
+//                }
+//                if (acc_flag) {
+//                    Log.d(DEBUG, "stop hehe");
+//                    unregisterReceiver(accelerometerreceiver);
+//                    acc_flag = false;
+//                }
+                Aware.stopSensor(Plugin.this, Aware_Preferences.STATUS_ACCELEROMETER);
+                if (acc_checkBox.isChecked()){
+                    acc_checkBox.setChecked(false);
                 }
-                if (acc_flag) {
-                    Log.d(DEBUG, "stop hehe");
+
+                if (acc_flag){
                     unregisterReceiver(accelerometerreceiver);
                     acc_flag = false;
+                    Log.d(DEBUG, "stop hehe");
                 }
+
+                Aware.stopSensor(Plugin.this, Aware_Preferences.STATUS_LOCATION_GPS);
+                if (gps_checkBox.isChecked()){
+                    gps_checkBox.setChecked(false);
+                }
+
+                if (gps_flag){
+                    unregisterReceiver(gpsreceiver);
+                    gps_flag = false;
+                    Log.d(DEBUG, "stop hehe");
+                }
+
                 Log.d(DEBUG, "stop 2");
+
 
 //                Aware.stopSensor(Plugin.this, Aware_Preferences.STATUS_ACCELEROMETER);
 //                Log.d(DEBUG, "stop 3");
