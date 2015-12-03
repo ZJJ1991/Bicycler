@@ -247,6 +247,8 @@ public class Plugin extends AppCompatActivity {
 
 //                registerReceiver(accelerometerreceiver, filter);
 //                Log.d(DEBUG, "acc has started");
+                start_btn.setBackgroundColor(Color.BLACK);
+                start_btn.setClickable(false);
                 stop_btn.setClickable(true);
                 stop_btn.setBackgroundColor(Color.BLUE);
                 Log.d(DEBUG, "color 10");
@@ -306,6 +308,8 @@ public class Plugin extends AppCompatActivity {
                 //start_btn.setClickable(true);
                 stop_btn.setBackgroundColor(Color.BLACK);
                 stop_btn.setClickable(false);
+                start_btn.setBackgroundColor(Color.BLUE);
+                start_btn.setClickable(true);
                 Log.d(DEBUG, "color 5");
             }
         });
