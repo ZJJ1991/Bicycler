@@ -9,34 +9,52 @@ android:paddingBottom="@dimen/activity_vertical_margin"
 app:layout_behavior="@string/appbar_scrolling_view_behavior"
 tools:showIn="@layout/activity_main" tools:context=".MainActivity">
 
-    <TextView
+
+    <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Gps_frequency"
-        android:id="@+id/textView"
+        android:text="GPS"
+        android:id="@+id/gps_checkbox"
+        android:checked="false"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="42dp" />
+        android:layout_marginTop="38dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Accelerometer_frequency"
-        android:id="@+id/textView2"
-        android:layout_above="@+id/start_btn"
+        android:text="@string/gps_default"
+        android:id="@+id/textView"
+        android:layout_below="@+id/gps_checkbox"
+        android:layout_alignParentStart="true" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Accelerometer"
+        android:id="@+id/acc_checkbox"
+        android:layout_below="@+id/textView"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="136dp" />
+        android:layout_marginTop="80dp"
+        android:checked="false" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/accelerometer_default"
+        android:id="@+id/textView3"
+        android:layout_below="@+id/acc_checkbox"
+        android:layout_alignParentStart="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="START"
         android:id="@+id/start_btn"
-        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/textView3"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="105dp" />
+        android:layout_marginTop="106dp"
+        android:layout_alignEnd="@+id/acc_checkbox" />
 
     <Button
         android:layout_width="wrap_content"
@@ -44,62 +62,25 @@ tools:showIn="@layout/activity_main" tools:context=".MainActivity">
         android:text="STOP"
         android:id="@+id/stop_btn"
         android:layout_alignTop="@+id/start_btn"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/textView3" />
 
-    <RadioGroup
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/textView"
-        android:layout_above="@+id/textView2"
-        android:layout_alignEnd="@+id/stop_btn"
-        android:layout_alignBottom="@+id/textView2"
-        android:id="@+id/Gps_fre_radio"
-        android:clickable="true">
-        <RadioButton android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="30 seconds"
-            android:id="@+id/Gpsfre_slow" />
-        <RadioButton android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="10 seconds"
-            android:id="@+id/Gpsfre_mediate"
-            />
-        <RadioButton android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="2 seconds"
-            android:id="@+id/Gpsfre_fast"
-            />
-    </RadioGroup>
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Frequency"
+        android:id="@+id/gpsfre_btn"
+        android:layout_above="@+id/textView"
+        android:layout_alignEnd="@+id/stop_btn" />
 
-    <RadioGroup
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignEnd="@+id/stop_btn"
-        android:layout_below="@+id/Gps_fre_radio"
-        android:layout_above="@+id/start_btn"
-        android:clickable="true"
-        android:id="@+id/Acc_fre_radio">
-        <RadioButton android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="200000 (normal)"
-            android:id="@+id/Accfre_normal"
-            />
-        <RadioButton android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="60000 (UI)"
-            android:id="@+id/Accfre_UI"
-            />
-        <RadioButton android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="20000 (game)"
-            android:id="@+id/Accfre_game"
-            />
-        <RadioButton android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0 (fastest)"
-            android:id="@+id/Accfre_fastest"
-            />
-    </RadioGroup>
-
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Frequency"
+        android:id="@+id/accfre_btn"
+        android:layout_above="@+id/textView3"
+        android:layout_alignEnd="@+id/gpsfre_btn" />
 
 </RelativeLayout>
