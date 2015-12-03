@@ -23,7 +23,7 @@ public class AccFrequency extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("GPS FREQUENCY SETTING");
+        builder.setTitle("ACCELEROMETER FREQUENCY SETTING");
         builder.setMessage("Type the frequency");
         LayoutInflater inflater = getActivity().getLayoutInflater();
         final View myview = inflater.inflate(R.layout.accfre, null);
